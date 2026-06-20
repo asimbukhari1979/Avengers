@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🔥 AVENGERS BROWSER</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+        body {
+            background: #0f0f1a;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ===== TOP BAR ===== */
+        .browser-bar {
+            background: #1e1e32;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            border-bottom: 3px solid #e74c3c;
+            flex-shrink: 0;
+        }
+
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 3px;
+            flex: 1;
+            overflow-x: auto;
+            min-width: 100px;
+        }
+        .tabs::-webkit-scrollbar {
+            height: 3px;
+        }
+        .tabs::-webkit-scrollbar-thumb {
+            background: #e74c3c;
+            border-radius: 10px;
+        }
+
+        .tab {
+            background: #2a2a44;
+            color: #aaa;
+            padding: 6px 14px;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 13px;
+            white-space: nowrap;
+            border: none;
+            min-width: 70px;
+            max-width: 150px;
+            text-align: center;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+        }
+        .tab.active {
+            background: #3a3a5c;
+            color: #fff;
+            border-bottom: 3px solid #e74c3c;
+        }
+        .tab:hover {
+            background: #3a3a5c;
+        }
+        .tab .favicon {
+            font-size: 14px;
+        }
+        .tab .tab-title {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .tab .close-btn {
+            color: #ff6b6b;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 0 4px;
+        }
+        .tab .close-btn:hover {
+            color: #ff0000;
+            transform: scale(1.2);
+        }
+
+        #newTabBtn {
+            background: #2a2a44;
+            color: #fff;
+            border: none;
+            padding: 4px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        #newTabBtn:hover {
+            background: #e74c3c;
+            transform: scale(1.05);
+        }
+
+        /* ===== NAV BUTTONS ===== */
+        .nav-buttons {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        .nav-buttons button {
+            background: #2a2a44;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+        .nav-buttons button:hover {
+            background: #e74c3c;
+            transform: scale(1.05);
+        }
+
+        /* ===== ADDRESS BAR ===== */
+        #addressBar {
+            flex: 1;
+            min-width: 180px;
+            padding: 7px 16px;
+            border-radius: 25px;
+            border: none;
+            background: #0f0f1a;
+            color: #fff;
+            font-size: 14px;
+            outline: 2px solid #3a3a5c;
+            transition: 0.3s;
+        }
+        #addressBar:focus {
+            outline: 2px solid #e74c3c;
+            background: #1a1a2e;
+        }
+
+        /* ===== BOOKMARKS BAR ===== */
+        .bookmarks-bar {
+            background: #16162a;
+            padding: 4px 12px;
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            flex-shrink: 0;
+            border-bottom: 1px solid #2a2a44;
+        }
+        .bookmarks-bar span {
+            color: #888;
+            font-size: 12px;
+            padding: 2px 0;
+        }
+        .bookmark-item {
+            color: #aaf;
+            font-size: 13px;
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 4px;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .bookmark-item:hover {
+            background: #e74c3c;
+            color: #fff;
+        }
+
+        /* ===== IFRAME ===== */
+        .iframe-container {
+            flex: 1;
+            background: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* ===== STATUS BAR ===== */
+        .status-bar {
+            background: #1e1e32;
+            color: #666;
+            padding: 3px 16px;
+            font-size: 12px;
+            border-top: 1px solid #2a2a44;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .status-bar .right {
+            color: #4a4a6a;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 700px) {
+            .browser-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .tabs {
+                order: 2;
+            }
+            #newTabBtn {
+                order: 3;
+                width: 100%;
+            }
+            .nav-buttons {
+                order: 1;
+                justify-content: center;
+            }
+            #addressBar {
+                order: 4;
+            }
+            .bookmarks-bar {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== BROWSER UI ===== -->
+    <div class="browser-bar">
+        <div class="tabs" id="tabContainer"></div>
+        <button id="newTabBtn">➕</button>
+
+        <div class="nav-buttons">
+            <button id="backBtn" title="Back">◀</button>
+            <button id="forwardBtn" title="Forward">▶</button>
+            <button id="refreshBtn" title="Refresh">⟳</button>
+            <button id="homeBtn" title="Home">🏠</button>
+        </div>
+
+        <input id="addressBar" placeholder="Search Google or type URL..." value="https://www.google.com">
+    </div>
+
+    <!-- ===== BOOKMARKS ===== -->
+    <div class="bookmarks-bar" id="bookmarksBar">
+        <span>⭐ Bookmarks:</span>
+        <span class="bookmark-item" data-url="https://www.google.com">Google</span>
+        <span class="bookmark-item" data-url="https://www.youtube.com">YouTube</span>
+        <span class="bookmark-item" data-url="https://www.github.com">GitHub</span>
+        <span class="bookmark-item" data-url="https://www.reddit.com">Reddit</span>
+        <span class="bookmark-item" data-url="https://www.wikipedia.org">Wikipedia</span>
+    </div>
+
+    <!-- ===== IFRAME ===== -->
+    <div class="iframe-container">
+        <iframe id="webFrame" src="https://www.google.com"></iframe>
+    </div>
+
+    <!-- ===== STATUS ===== -->
+    <div class="status-bar">
+        <span id="statusText"> </span>
+        <span class="right">⚡ AVENGERS v2.0</span>
+    </div>
+
+    <script>
+        // ============================================================
+        // 🧠 STATE
+        // ============================================================
+        let tabs = [{ id: 0, url: 'https://www.google.com', title: 'Google' }];
+        let activeTabId = 0;
+        let tabIdCounter = 1;
+        let history = { 0: ['https://www.google.com'] };
+        let historyIndex = { 0: 0 };
+
+        // DOM refs
+        const frame = document.getElementById('webFrame');
+        const addressBar = document.getElementById('addressBar');
+        const tabContainer = document.getElementById('tabContainer');
+        const statusText = document.getElementById('statusText');
+
+        // ============================================================
+        // 🎨 GET FAVICON
+        // ============================================================
+        function getFavicon(url) {
+            try {
+                const u = new URL(url);
+                return `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=16`;
+            } catch {
+                return '🌐';
+            }
+        }
+
+        // ============================================================
+        // 📑 RENDER TABS
+        // ============================================================
+        function renderTabs() {
+            tabContainer.innerHTML = '';
+            tabs.forEach(tab => {
+                const btn = document.createElement('button');
+                btn.className = `tab ${tab.id === activeTabId ? 'active' : ''}`;
+                btn.dataset.id = tab.id;
+
+                const fav = document.createElement('span');
+                fav.className = 'favicon';
+                fav.textContent = '🌐';
+                if (tab.url && tab.url.startsWith('http')) {
+                    fav.innerHTML = `<img src="${getFavicon(tab.url)}" style="width:16px;height:16px;border-radius:4px;">`;
+                }
+
+                const title = document.createElement('span');
+                title.className = 'tab-title';
+                title.textContent = tab.title || 'New Tab';
+
+                const close = document.createElement('span');
+                close.className = 'close-btn';
+                close.textContent = '✕';
+
+                btn.appendChild(fav);
+                btn.appendChild(title);
+                btn.appendChild(close);
+
+                btn.onclick = () => switchTab(tab.id);
+                close.onclick = (e) => {
+                    e.stopPropagation();
+                    closeTab(tab.id);
+                };
+
+                tabContainer.appendChild(btn);
+            });
+
+            // Scroll to active tab
+            const activeEl = tabContainer.querySelector('.tab.active');
+            if (activeEl) activeEl.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        }
+
+        // ============================================================
+        // 📑 TAB FUNCTIONS
+        // ============================================================
+        function switchTab(id) {
+            activeTabId = id;
+            const tab = tabs.find(t => t.id === id);
+            if (tab) {
+                frame.src = tab.url;
+                addressBar.value = tab.url;
+                if (!history[id]) { history[id] = []; historyIndex[id] = -1; }
+                if (historyIndex[id] === undefined) historyIndex[id] = 0;
+                statusText.textContent = `📄 ${tab.title}`;
+            }
+            renderTabs();
+        }
+
+        function addTab(url = 'https://www.google.com', title = 'New Tab') {
+            const id = tabIdCounter++;
+            tabs.push({ id, url, title });
+            if (!history[id]) { history[id] = [url]; historyIndex[id] = 0; }
+            switchTab(id);
+            renderTabs();
+        }
+
+        function closeTab(id) {
+            if (tabs.length === 1) {
+                tabs[0].url = 'https://www.google.com';
+                tabs[0].title = 'Google';
+                switchTab(0);
+                return;
+            }
+            const idx = tabs.findIndex(t => t.id === id);
+            if (idx > -1) {
+                tabs.splice(idx, 1);
+                if (activeTabId === id) {
+                    activeTabId = tabs[0].id;
+                    const tab = tabs[0];
+                    frame.src = tab.url;
+                    addressBar.value = tab.url;
+                }
+                renderTabs();
+            }
+        }
+
+        // ============================================================
+        // 🌐 NAVIGATE
+        // ============================================================
+        function navigateTo(url) {
+            if (!url || url.trim() === '') return;
+
+            let cleanUrl = url.trim();
+            if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+                if (cleanUrl.includes('.') && !cleanUrl.includes(' ')) {
+                    cleanUrl = 'https://www.' + cleanUrl;
+                } else {
+                    cleanUrl = 'https://www.google.com/search?q=' + encodeURIComponent(cleanUrl);
+                }
+            }
+
+            const tab = tabs.find(t => t.id === activeTabId);
+            if (tab) {
+                tab.url = cleanUrl;
+                try {
+                    const u = new URL(cleanUrl);
+                    tab.title = u.hostname.replace('www.', '').split('.')[0];
+                    tab.title = tab.title.charAt(0).toUpperCase() + tab.title.slice(1);
+                } catch {
+                    tab.title = cleanUrl.slice(0, 20);
+                }
+
+                frame.src = cleanUrl;
+                addressBar.value = cleanUrl;
+
+                if (!history[activeTabId]) history[activeTabId] = [];
+                history[activeTabId].push(cleanUrl);
+                historyIndex[activeTabId] = history[activeTabId].length - 1;
+
+                renderTabs();
+                statusText.textContent = `🌐 ${tab.title}`;
+            }
+        }
+
+        // ============================================================
+        // ⬅️➡️ BACK / FORWARD
+        // ============================================================
+        function goBack() {
+            const h = history[activeTabId] || [];
+            let idx = historyIndex[activeTabId] || 0;
+            if (idx > 0) {
+                idx--;
+                historyIndex[activeTabId] = idx;
+                frame.src = h[idx];
+                addressBar.value = h[idx];
+            }
+        }
+
+        function goForward() {
+            const h = history[activeTabId] || [];
+            let idx = historyIndex[activeTabId] || 0;
+            if (idx < h.length - 1) {
+                idx++;
+                historyIndex[activeTabId] = idx;
+                frame.src = h[idx];
+                addressBar.value = h[idx];
+            }
+        }
+
+        // ============================================================
+        // 🏠 HOME
+        // ============================================================
+        function goHome() {
+            navigateTo('https://www.google.com');
+        }
+
+        // ============================================================
+        // 🎯 EVENT BINDINGS
+        // ============================================================
+        // Address Bar
+        addressBar.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') navigateTo(addressBar.value);
+        });
+
+        // New Tab
+        document.getElementById('newTabBtn').addEventListener('click', () => {
+            addTab('https://www.google.com', 'Google');
+        });
+
+        // Navigation
+        document.getElementById('backBtn').addEventListener('click', goBack);
+        document.getElementById('forwardBtn').addEventListener('click', goForward);
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+            const tab = tabs.find(t => t.id === activeTabId);
+            if (tab) frame.src = tab.url;
+        });
+        document.getElementById('homeBtn').addEventListener('click', goHome);
+
+        // Bookmarks
+        document.querySelectorAll('.bookmark-item').forEach(el => {
+            el.addEventListener('click', () => {
+                navigateTo(el.dataset.url);
+            });
+        });
+
+        // IFrame load
+        frame.addEventListener('load', () => {
+            try {
+                const url = frame.contentWindow.location.href;
+                addressBar.value = url;
+                const tab = tabs.find(t => t.id === activeTabId);
+                if (tab) {
+                    tab.url = url;
+                    try {
+                        const u = new URL(url);
+                        tab.title = u.hostname.replace('www.', '').split('.')[0];
+                        tab.title = tab.title.charAt(0).toUpperCase() + tab.title.slice(1);
+                    } catch {}
+                    renderTabs();
+                    statusText.textContent = `✅ ${tab.title}`;
+                }
+            } catch {
+                // Cross-origin: kuch nahi
+            }
+        });
+
+        // ============================================================
+        // 🚀 INIT
+        // ============================================================
+        renderTabs();
+        statusText.textContent = '✅ Ready';
+
+        console.log('🔥 AVENGERS BROWSER LOADED!');
+        console.log('💀 Teri Maka ki kasam, ab maza aayega!');
+    </script>
+</body>
+</html>
